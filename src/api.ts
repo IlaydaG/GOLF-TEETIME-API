@@ -1,8 +1,8 @@
 import { writeFile } from "fs/promises";
 import { SunData } from "./type";
 
-const LAT = 36.8602793; 
-const LNG = 30.9995637;
+const LAT = 36.8578077;
+const LNG = 31.0006614;
 
 async function getSunData(): Promise<SunData[]> {
   const allData: SunData[] = [];
