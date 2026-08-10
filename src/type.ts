@@ -40,3 +40,11 @@ export interface WeatherDayData {
   humidity: number;
   windSpeed: number;
 }
+
+export type TeeTimeStatus = "OK" | "TWILIGHT" | "-";
+
+export interface TeeTime {
+  time: string; 
+  start: Date; 
+  finish: Date; 
+  status: TeeTimeStatus;}

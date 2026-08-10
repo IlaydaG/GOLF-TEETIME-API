@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+}
+
+model GOLF_TEETIME_HOURS {
+  ID              Int       @id(map: "PK__GOLF_TEE__3214EC2793CC5452") @default(autoincrement())
+  HOTELID         Int
+  DEPID           Int?
+  PLACEID         Int?
+  DATEFROM        DateTime? @db.Date
+  DATETO          DateTime? @db.Date
+  FIRSTTEETIME    DateTime? @db.Time
+  LASTTEETIME     DateTime? @db.Time
+  CREATORID       Int?
+  UPDATEUSER      Int?
+  LASTUPDATE_DATE DateTime? @db.Date
+  CREATION_DATE   DateTime? @db.Date
+  ISDISABLED      Boolean?
+  TWILIGHTSTART   DateTime? @db.Time
+  TWILIGHTEND     DateTime? @db.Time
+  TOTALTEETIME    Int?
+}
+
+model SunData {
+  id                 Int      @id(map: "PK__SunData__3213E83F50F56D11") @default(autoincrement())
+  date               DateTime @unique(map: "UQ__SunData__D9DE21FDEF95C5E4") @db.Date
+  sunrise            DateTime @db.DateTimeOffset
+  sunset             DateTime @db.DateTimeOffset
+  civilTwilightBegin DateTime @db.DateTimeOffset
+  civilTwilightEnd   DateTime @db.DateTimeOffset
+}
+
+model weather_forecast {
+  id                        Int      @id(map: "PK__weather___3213E83F55C0790D") @default(autoincrement())
+  date                      DateTime @unique(map: "UQ__weather___D9DE21FD6DDDD18C") @db.Date
+  weathercode               Int
+  weather_description       String   @db.NVarChar(50)
+  severity                  String   @db.NVarChar(10)
+  temp_max                  Float
+  temp_min                  Float
+  precipitation_probability Int
+  precipitation_sum         Float
+  humidity                  Float    @default(0, map: "DF__weather_f__humid__3B75D760")
+  wind_speed                Float    @default(0, map: "DF__weather_f__wind___3C69FB99")
+}

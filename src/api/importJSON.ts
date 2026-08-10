@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import sql from "mssql";
-import { connectDB, connectMaster } from "./db";
-import { SunData } from "./type";
+import { connectDB, connectMaster } from "../db";
+import { SunData } from "../type";
 
 async function ensureDatabaseExists() {
   const pool = await connectMaster();
