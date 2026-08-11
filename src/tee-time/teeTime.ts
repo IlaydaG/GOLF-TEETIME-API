@@ -95,7 +95,7 @@ export function getFirstPlayableTeeTime(rows: TeeTime[]): TeeTime | undefined {
 }
 
 // OK'dan twilight'a geçilen ilk satır
-function getFirstTwilightTeeTime(rows: TeeTime[]): TeeTime | undefined {
+export function getFirstTwilightTeeTime(rows: TeeTime[]): TeeTime | undefined {
   return rows.find((row) => row.status === "TWILIGHT");
 }
 

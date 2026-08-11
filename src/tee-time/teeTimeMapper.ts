@@ -1,30 +1,20 @@
 import { SunData, TeeTime } from "../type";
-import { countByStatus, getFirstPlayableTeeTime, getLastBookableTeeTime } from "./teeTime";
+import { countByStatus, getFirstPlayableTeeTime, getFirstTwilightTeeTime, getLastBookableTeeTime, } from "./teeTime";
 
-interface GolfTeeTimeHoursRow {
-  HOTELID: number;
-  DEPID: number;
-  PLACEID: number;
-  DATEFROM: Date;
-  DATETO: Date;
+interface TeeTimeTableRow {
+  TEETIMEDATE: Date;
   FIRSTTEETIME: Date;
   LASTTEETIME: Date;
-  TWILIGHTSTART: Date;
-  TWILIGHTEND: Date;
+  TWILIGHTSTART: Date | null;
   TOTALTEETIME: number;
-  CREATORID: number;
-  UPDATEUSER: number;
-  CREATION_DATE: Date;
-  LASTUPDATE_DATE: Date;
-  ISDISABLED: boolean;
 }
 
 function toDateOnly(date: string): Date {
   return new Date(`${date}T00:00:00Z`);
 }
 
-function toTimeOnly(hh: number, mm: number, ss = 0): Date {
-  return new Date(Date.UTC(1970, 0, 1, hh, mm, ss));
+function toTimeOnly(hh: number, mm: number): Date {
+  return new Date(Date.UTC(1970, 0, 1, hh, mm));
 }
 
 function timeLabelToTimeOnly(time: string): Date {
@@ -32,37 +22,22 @@ function timeLabelToTimeOnly(time: string): Date {
   return toTimeOnly(h, m);
 }
 
-function isoToTimeOnly(iso: string): Date {
-  const [h, m, s] = iso.slice(11, 19).split(":").map(Number);
-  return toTimeOnly(h, m, s);
-}
-
-export function toGolfTeeTimeRow(
+export function toTeeTimeTableRow(
   day: SunData,
   rows: TeeTime[]
-): GolfTeeTimeHoursRow | undefined {
+): TeeTimeTableRow | undefined {
   const first = getFirstPlayableTeeTime(rows);
   const last = getLastBookableTeeTime(rows);
 
   if (!first || !last) return undefined;
 
-  const today = new Date();
+  const twilightStart = getFirstTwilightTeeTime(rows);
 
   return {
-    HOTELID: 1,
-    DEPID: 1,
-    PLACEID: 1,
-    DATEFROM: toDateOnly(day.date),
-    DATETO: toDateOnly(day.date),
+    TEETIMEDATE: toDateOnly(day.date),
     FIRSTTEETIME: timeLabelToTimeOnly(first.time),
     LASTTEETIME: timeLabelToTimeOnly(last.time),
-    TWILIGHTSTART: isoToTimeOnly(day.sunset),
-    TWILIGHTEND: isoToTimeOnly(day.civilTwilightEnd),
+    TWILIGHTSTART: twilightStart ? timeLabelToTimeOnly(twilightStart.time) : null,
     TOTALTEETIME: countByStatus(rows, "OK"),
-    CREATORID: 1,
-    UPDATEUSER: 1,
-    CREATION_DATE: today,
-    LASTUPDATE_DATE: today,
-    ISDISABLED: false,
   };
 }

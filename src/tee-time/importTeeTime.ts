@@ -4,7 +4,7 @@ import { PrismaClient } from "../generated/prisma/client";
 import sunData from "../../sunData.json";
 import { SunData } from "../type";
 import { getStableTeeTimeTableForDate, ROUND_DURATION_MINUTES } from "./teeTime";
-import { toGolfTeeTimeRow } from "./teeTimeMapper";
+import { toTeeTimeTableRow } from "./teeTimeMapper";
 
 const adapter = new PrismaMssql({
   server: process.env.DB_SERVER as string,
@@ -26,27 +26,22 @@ async function importDay(day: SunData, roundDurationMinutes: number): Promise<Im
   const rows = getStableTeeTimeTableForDate(day.date, roundDurationMinutes);
   if (!rows) return "skipped";
 
-  const row = toGolfTeeTimeRow(day, rows);
+  const row = toTeeTimeTableRow(day, rows);
   if (!row) return "skipped";
 
-  const existing = await prisma.gOLF_TEETIME_HOURS.findFirst({
-    where: {
-      HOTELID: row.HOTELID,
-      DEPID: row.DEPID,
-      PLACEID: row.PLACEID,
-      DATEFROM: row.DATEFROM,
-    },
+  const existing = await prisma.tEETIME_TABLE.findUnique({
+    where: { TEETIMEDATE: row.TEETIMEDATE },
   });
 
   if (existing) {
-    await prisma.gOLF_TEETIME_HOURS.update({
-      where: { ID: existing.ID },
+    await prisma.tEETIME_TABLE.update({
+      where: { TEETIMEDATE: row.TEETIMEDATE },
       data: row,
     });
     return "updated";
   }
 
-  await prisma.gOLF_TEETIME_HOURS.create({ data: row });
+  await prisma.tEETIME_TABLE.create({ data: row });
   return "created";
 }
 
