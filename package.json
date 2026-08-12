@@ -8,6 +8,7 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/api/api.js",
     "import:teetime": "ts-node src/tee-time/importTeeTime.ts",
+    "import:teetime-ranges": "ts-node src/tee-time/importTeeTimeRanges.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

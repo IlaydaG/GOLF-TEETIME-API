@@ -37,3 +37,13 @@ model TEETIME_TABLE {
   TWILIGHTSTART DateTime? @db.Time
   TOTALTEETIME  Int?
 }
+
+model TEETIME_RANGE {
+  id            Int       @id @default(autoincrement())
+  DATEFROM      DateTime  @db.Date
+  DATETO        DateTime  @db.Date
+  FIRSTTEETIME  DateTime? @db.Time
+  LASTTEETIME   DateTime? @db.Time
+  TWILIGHTSTART DateTime? @db.Time
+  TOTALTEETIME  Int?
+}

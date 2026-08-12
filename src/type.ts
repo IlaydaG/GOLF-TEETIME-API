@@ -44,7 +44,25 @@ export interface WeatherDayData {
 export type TeeTimeStatus = "OK" | "TWILIGHT" | "-";
 
 export interface TeeTime {
-  time: string; 
-  start: Date; 
-  finish: Date; 
-  status: TeeTimeStatus;}
+  time: string;
+  start: Date;
+  finish: Date;
+  status: TeeTimeStatus;
+}
+
+export interface TeeTimeDayRow {
+  TEETIMEDATE: Date;
+  FIRSTTEETIME: Date | null;
+  LASTTEETIME: Date | null;
+  TWILIGHTSTART: Date | null;
+  TOTALTEETIME: number | null;
+}
+
+export interface TeeTimeRangeRow {
+  DATEFROM: Date;
+  DATETO: Date;
+  FIRSTTEETIME: Date | null;
+  LASTTEETIME: Date | null;
+  TWILIGHTSTART: Date | null;
+  TOTALTEETIME: number | null;
+}

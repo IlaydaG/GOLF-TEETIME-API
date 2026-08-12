@@ -38,6 +38,6 @@ export function toTeeTimeTableRow(
     FIRSTTEETIME: timeLabelToTimeOnly(first.time),
     LASTTEETIME: timeLabelToTimeOnly(last.time),
     TWILIGHTSTART: twilightStart ? timeLabelToTimeOnly(twilightStart.time) : null,
-    TOTALTEETIME: countByStatus(rows, "OK"),
+    TOTALTEETIME: countByStatus(rows, "OK") + countByStatus(rows, "TWILIGHT"),
   };
 }
