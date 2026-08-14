@@ -8,7 +8,7 @@ function rowKey(row: TeeTimeDayRow): string {
   return [
     timeKey(row.FIRSTTEETIME),
     timeKey(row.LASTTEETIME),
-    timeKey(row.TWILIGHTSTART),
+    timeKey(row.TWILIGHT),
     row.TOTALTEETIME === null ? "null" : String(row.TOTALTEETIME),
   ].join("|");
 }
@@ -44,7 +44,7 @@ export function groupTeeTimeRanges(days: TeeTimeDayRow[]): TeeTimeRangeRow[] {
         DATETO: day.TEETIMEDATE,
         FIRSTTEETIME: day.FIRSTTEETIME,
         LASTTEETIME: day.LASTTEETIME,
-        TWILIGHTSTART: day.TWILIGHTSTART,
+        TWILIGHT: day.TWILIGHT,
         TOTALTEETIME: day.TOTALTEETIME,
       });
       currentKey = key;

@@ -11,6 +11,7 @@ const TABLE_START_TIME = "05:27";
 const TABLE_END_TIME = "18:57";
 const INTERVAL_MINUTES = 9;
 export const ROUND_DURATION_MINUTES = 270; //  4.5 saat
+export const TWILIGHT_ROUND_DURATION_MINUTES = 120; // 2 saat - twilight oyun süresi (parametrik)
 
 function toMinutes(time: string): number {
   const [h, m] = time.split(":").map(Number);
@@ -50,33 +51,50 @@ function toIstanbulDate(date: string, time: string): Date {
   return new Date(`${date}T${time}:00+03:00`); 
 }
 
-function resolveStatus(
+function resolveTeeTimeSlot(
   start: Date,
-  finish: Date,
   sunrise: Date,
   sunset: Date,
-  civilTwilightEnd: Date
-): TeeTimeStatus {
-  if (start.getTime() < sunrise.getTime()) return "-";
-  if (finish.getTime() <= sunset.getTime()) return "OK";
-  if (finish.getTime() <= civilTwilightEnd.getTime()) return "TWILIGHT";
-  return "-";
-}
+  roundMs: number,
+  twilightRoundMs: number
+): { finish: Date; status: TeeTimeStatus } {
+  const finishNormal = new Date(start.getTime() + roundMs);
 
+  if (start.getTime() < sunrise.getTime()) {
+    return { finish: finishNormal, status: "-" };
+  }
+
+  if (finishNormal.getTime() <= sunset.getTime()) {
+    return { finish: finishNormal, status: "OK" };
+  }
+
+  const finishTwilight = new Date(start.getTime() + twilightRoundMs);
+  if (finishTwilight.getTime() <= sunset.getTime()) {
+    return { finish: finishTwilight, status: "TWILIGHT" };
+  }
+
+  return { finish: finishNormal, status: "-" };
+}
 
 function generateStableTeeTimeTable(
   day: SunData,
-  roundDurationMinutes = ROUND_DURATION_MINUTES
+  roundDurationMinutes = ROUND_DURATION_MINUTES,
+  twilightRoundDurationMinutes = TWILIGHT_ROUND_DURATION_MINUTES
 ): TeeTime[] {
   const sunrise = new Date(day.sunrise);
   const sunset = new Date(day.sunset);
-  const civilTwilightEnd = new Date(day.civilTwilightEnd);
   const roundMs = roundDurationMinutes * 60 * 1000;
+  const twilightRoundMs = twilightRoundDurationMinutes * 60 * 1000;
 
   return STABLE_TIME_SLOTS.map((time) => {
     const start = toIstanbulDate(day.date, time);
-    const finish = new Date(start.getTime() + roundMs);
-    const status = resolveStatus(start, finish, sunrise, sunset, civilTwilightEnd);
+    const { finish, status } = resolveTeeTimeSlot(
+      start,
+      sunrise,
+      sunset,
+      roundMs,
+      twilightRoundMs
+    );
 
     return { time, start, finish, status };
   });
@@ -84,10 +102,13 @@ function generateStableTeeTimeTable(
 
 export function getStableTeeTimeTableForDate(
   date: string,
-  roundDurationMinutes = ROUND_DURATION_MINUTES
+  roundDurationMinutes = ROUND_DURATION_MINUTES,
+  twilightRoundDurationMinutes = TWILIGHT_ROUND_DURATION_MINUTES
 ): TeeTime[] | undefined {
   const day = ALL_SUN_DATA.find((d) => d.date === date);
-  return day ? generateStableTeeTimeTable(day, roundDurationMinutes) : undefined;
+  return day
+    ? generateStableTeeTimeTable(day, roundDurationMinutes, twilightRoundDurationMinutes)
+    : undefined;
 }
 
 export function getFirstPlayableTeeTime(rows: TeeTime[]): TeeTime | undefined {
@@ -115,8 +136,12 @@ function formatTime(d: Date): string {
   });
 }
 
-function printDay(date: string, roundDurationMinutes = ROUND_DURATION_MINUTES) {
-  const rows = getStableTeeTimeTableForDate(date, roundDurationMinutes);
+function printDay(
+  date: string,
+  roundDurationMinutes = ROUND_DURATION_MINUTES,
+  twilightRoundDurationMinutes = TWILIGHT_ROUND_DURATION_MINUTES
+) {
+  const rows = getStableTeeTimeTableForDate(date, roundDurationMinutes, twilightRoundDurationMinutes);
 
   if (!rows) {
     console.log(
@@ -146,12 +171,19 @@ function main() {
 
   if (!date) {
     console.log(
-      `Kullanım: npx ts-node src/tee-time/teeTime.ts YYYY-MM-DD (${AVAILABLE_YEARS[0]}-${AVAILABLE_YEARS[AVAILABLE_YEARS.length - 1]} arası)`
+      `Kullanım: npx ts-node src/tee-time/teeTime.ts YYYY-MM-DD [roundSaat] [twilightRoundSaat] (${AVAILABLE_YEARS[0]}-${AVAILABLE_YEARS[AVAILABLE_YEARS.length - 1]} arası)`
     );
     return;
   }
 
-  printDay(date);
+  const roundDurationMinutes = process.argv[3]
+    ? Math.round(Number(process.argv[3]) * 60)
+    : ROUND_DURATION_MINUTES;
+  const twilightRoundDurationMinutes = process.argv[4]
+    ? Math.round(Number(process.argv[4]) * 60)
+    : TWILIGHT_ROUND_DURATION_MINUTES;
+
+  printDay(date, roundDurationMinutes, twilightRoundDurationMinutes);
 }
 
 if (require.main === module) {

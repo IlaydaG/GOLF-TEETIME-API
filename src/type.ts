@@ -54,7 +54,7 @@ export interface TeeTimeDayRow {
   TEETIMEDATE: Date;
   FIRSTTEETIME: Date | null;
   LASTTEETIME: Date | null;
-  TWILIGHTSTART: Date | null;
+  TWILIGHT: Date | null;
   TOTALTEETIME: number | null;
 }
 
@@ -63,6 +63,37 @@ export interface TeeTimeRangeRow {
   DATETO: Date;
   FIRSTTEETIME: Date | null;
   LASTTEETIME: Date | null;
-  TWILIGHTSTART: Date | null;
+  TWILIGHT: Date | null;
   TOTALTEETIME: number | null;
+}
+
+export interface TeeTimeTableRow {
+  TEETIMEDATE: Date;
+  FIRSTTEETIME: Date;
+  LASTTEETIME: Date;
+  TWILIGHT: Date | null;
+  TOTALTEETIME: number;
+}
+
+export interface GolfTeeTimeHoursRow {
+  DEPID: number;
+  PLACEID: number;
+  DATEFROM: string;
+  DATETO: string;
+  FIRSTTEETIME: string | null;
+  LASTTEETIME: string | null;
+  TWILIGHT: string | null;
+  TEETIMECOUNT: number | null;
+}
+
+export interface ElektrawebLoginResponse {
+  Success: boolean;
+  LoginToken: string;
+}
+
+export interface ElektrawebInsertResponse {
+  Success: boolean;
+  PrimaryKey: number;
+  PrimaryKeys: number[];
+  Message: string;
 }

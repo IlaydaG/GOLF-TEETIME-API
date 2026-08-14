@@ -1,13 +1,5 @@
-import { SunData, TeeTime } from "../type";
+import { SunData, TeeTime, TeeTimeTableRow } from "../type";
 import { countByStatus, getFirstPlayableTeeTime, getFirstTwilightTeeTime, getLastBookableTeeTime, } from "./teeTime";
-
-interface TeeTimeTableRow {
-  TEETIMEDATE: Date;
-  FIRSTTEETIME: Date;
-  LASTTEETIME: Date;
-  TWILIGHTSTART: Date | null;
-  TOTALTEETIME: number;
-}
 
 function toDateOnly(date: string): Date {
   return new Date(`${date}T00:00:00Z`);
@@ -37,7 +29,7 @@ export function toTeeTimeTableRow(
     TEETIMEDATE: toDateOnly(day.date),
     FIRSTTEETIME: timeLabelToTimeOnly(first.time),
     LASTTEETIME: timeLabelToTimeOnly(last.time),
-    TWILIGHTSTART: twilightStart ? timeLabelToTimeOnly(twilightStart.time) : null,
+    TWILIGHT: twilightStart ? timeLabelToTimeOnly(twilightStart.time) : null,
     TOTALTEETIME: countByStatus(rows, "OK") + countByStatus(rows, "TWILIGHT"),
   };
 }

@@ -31,19 +31,31 @@ model weather_forecast {
 }
 
 model TEETIME_TABLE {
-  TEETIMEDATE   DateTime  @id(map: "PK__TEETIME___4CB317327BEC601C") @db.Date
-  FIRSTTEETIME  DateTime? @db.Time
-  LASTTEETIME   DateTime? @db.Time
-  TWILIGHTSTART DateTime? @db.Time
-  TOTALTEETIME  Int?
+  TEETIMEDATE  DateTime  @id(map: "PK__TEETIME___4CB317327BEC601C") @db.Date
+  FIRSTTEETIME DateTime? @db.Time
+  LASTTEETIME  DateTime? @db.Time
+  TWILIGHT     DateTime? @db.Time
+  TOTALTEETIME Int?
 }
 
 model TEETIME_RANGE {
-  id            Int       @id @default(autoincrement())
-  DATEFROM      DateTime  @db.Date
-  DATETO        DateTime  @db.Date
-  FIRSTTEETIME  DateTime? @db.Time
-  LASTTEETIME   DateTime? @db.Time
-  TWILIGHTSTART DateTime? @db.Time
-  TOTALTEETIME  Int?
+  id           Int       @id @default(autoincrement())
+  DATEFROM     DateTime  @db.Date
+  DATETO       DateTime  @db.Date
+  FIRSTTEETIME DateTime? @db.Time
+  LASTTEETIME  DateTime? @db.Time
+  TWILIGHT     DateTime? @db.Time
+  TOTALTEETIME Int?
+}
+
+model GOLF_TEETIME_HOURS {
+  ID           Int       @id @default(autoincrement())
+  DEPID        Int?
+  PLACEID      Int?
+  DATEFROM     DateTime? @db.Date
+  DATETO       DateTime? @db.Date
+  FIRSTTEETIME DateTime? @db.Time
+  LASTTEETIME  DateTime? @db.Time
+  TWILIGHT     DateTime? @db.Time
+  TOTALTEETIME Int?
 }

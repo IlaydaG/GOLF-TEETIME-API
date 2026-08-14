@@ -3,7 +3,11 @@ import { PrismaMssql } from "@prisma/adapter-mssql";
 import { PrismaClient } from "../generated/prisma/client";
 import sunData from "../../sunData.json";
 import { SunData } from "../type";
-import { getStableTeeTimeTableForDate, ROUND_DURATION_MINUTES } from "./teeTime";
+import {
+  getStableTeeTimeTableForDate,
+  ROUND_DURATION_MINUTES,
+  TWILIGHT_ROUND_DURATION_MINUTES,
+} from "./teeTime";
 import { toTeeTimeTableRow } from "./teeTimeMapper";
 
 const adapter = new PrismaMssql({
@@ -22,8 +26,12 @@ const prisma = new PrismaClient({ adapter });
 
 type ImportResult = "created" | "updated" | "skipped";
 
-async function importDay(day: SunData, roundDurationMinutes: number): Promise<ImportResult> {
-  const rows = getStableTeeTimeTableForDate(day.date, roundDurationMinutes);
+async function importDay(
+  day: SunData,
+  roundDurationMinutes: number,
+  twilightRoundDurationMinutes: number
+): Promise<ImportResult> {
+  const rows = getStableTeeTimeTableForDate(day.date, roundDurationMinutes, twilightRoundDurationMinutes);
   if (!rows) return "skipped";
 
   const row = toTeeTimeTableRow(day, rows);
@@ -51,18 +59,24 @@ async function main() {
   const roundDurationHours = process.argv[2] ? Number(process.argv[2]) : ROUND_DURATION_MINUTES / 60;
   const roundDurationMinutes = Math.round(roundDurationHours * 60);
 
+  const twilightRoundDurationHours = process.argv[3]
+    ? Number(process.argv[3])
+    : TWILIGHT_ROUND_DURATION_MINUTES / 60;
+  const twilightRoundDurationMinutes = Math.round(twilightRoundDurationHours * 60);
+
   let created = 0;
   let updated = 0;
   let skipped = 0;
 
   for (const day of days) {
-    const result = await importDay(day, roundDurationMinutes);
+    const result = await importDay(day, roundDurationMinutes, twilightRoundDurationMinutes);
     if (result === "created") created++;
     else if (result === "updated") updated++;
     else skipped++;
   }
 
   console.log(`Tur süresi: ${roundDurationHours} saat`);
+  console.log(`Twilight tur süresi: ${twilightRoundDurationHours} saat`);
   console.log(`Toplam gün: ${days.length}`);
   console.log(`Oluşturulan: ${created}, Güncellenen: ${updated}, Atlanan: ${skipped}`);
 }
