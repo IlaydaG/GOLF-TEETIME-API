@@ -86,6 +86,16 @@ export interface GolfTeeTimeHoursRow {
   TEETIMECOUNT: number | null;
 }
 
+export interface ElektrawebSunDataRow {
+  DEPID: number;
+  PLACEID: number;
+  DATE: string;
+  SUNRISE: string;
+  SUNSET: string;
+  CIVILTWILIGHTBEGIN: string;
+  CIVILTWILIGHTEND: string;
+}
+
 export interface ElektrawebLoginResponse {
   Success: boolean;
   LoginToken: string;

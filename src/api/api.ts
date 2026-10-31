@@ -7,7 +7,7 @@ const LNG = 31.0006614;
 async function getSunData() : Promise<SunData[]>{
   const allData: SunData[] = [];
 
-  for(let year =2026; year <=2031; year++){
+  for(let year =2026; year <=2036; year++){
     const url =
       `https://api.sunrise-sunset.org/v2?lat=${LAT}&lng=${LNG}` +
       `&date_start=${year}-01-01` +

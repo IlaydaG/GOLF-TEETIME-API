@@ -1,5 +1,6 @@
 import { ElektrawebInsertResponse, ElektrawebLoginResponse } from "../type";
 
+//const ELEKTRAWEB_BASE_URL = "https://api.kayaelektra.com";
 const ELEKTRAWEB_BASE_URL = "https://pmsapi.elektraweb.dev";
 
 export async function login(): Promise<string> {
@@ -40,7 +41,6 @@ export async function insertRow(
   rows: object[]
 ): Promise<ElektrawebInsertResponse> {
   const token = await login();
-
   const response = await fetch(`${ELEKTRAWEB_BASE_URL}/Insert`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

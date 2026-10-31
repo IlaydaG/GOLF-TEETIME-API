@@ -10,6 +10,7 @@
     "import:teetime": "ts-node src/tee-time/importTeeTime.ts",
     "import:teetime-ranges": "ts-node src/tee-time/importTeeTimeRanges.ts",
     "push:teetime-hours": "ts-node src/tee-time/pushTeeTimeHours.ts",
+    "push:sundata": "ts-node src/api/pushSunData.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
